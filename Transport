@@ -1,0 +1,189 @@
+package com.mycompany.assignmenty1y2g5;
+import java.util.*;
+
+interface Movable {
+    void move();
+}
+
+abstract class Transport implements Movable {
+    protected String type;
+    protected String name;
+    protected int currentLoad;
+    protected int maxLoad;
+
+    public Transport(String type, String name, int maxLoad) {
+        this.type = type;
+        this.name = name;
+        this.maxLoad = maxLoad;
+        this.currentLoad = 0;
+    }
+
+    public void load(int loadWeight) throws Exception {
+        if (loadWeight <= 0) {
+            throw new Exception("Invalid weight to load. Loading cancelled.");
+        }
+        if (currentLoad + loadWeight > maxLoad) {
+            throw new Exception("Cannot load more than max capacity. Loading cancelled.");
+        }
+        currentLoad += loadWeight;
+    }
+
+    public void unload(int unloadWeight) throws Exception {
+        if (unloadWeight <= 0 || unloadWeight > currentLoad) {
+            throw new Exception("Invalid weight to unload. Unloading cancelled.");
+        }
+        currentLoad -= unloadWeight;
+    }
+
+    @Override
+    public String toString() {
+        return "Type=" + type + ", Name=" + name + ", max Load=" + maxLoad + " kg, current Load=" + currentLoad + " kg";
+    }
+}
+
+class Aeroplane extends Transport {
+    public Aeroplane(String name, int maxLoad) {
+        super("Aeroplane", name, maxLoad);
+    }
+
+    @Override
+    public void move() {
+        System.out.println(name + " flies.");
+    }
+}
+
+class Aircraft extends Transport {
+    public Aircraft(String name, int maxLoad) {
+        super("Aircraft", name, maxLoad);
+    }
+
+    @Override
+    public void move() {
+        System.out.println(name + " flies.");
+    }
+}
+
+class Ship extends Transport {
+    public Ship(String name, int maxLoad) {
+        super("Ship", name, maxLoad);
+    }
+
+    @Override
+    public void move() {
+        System.out.println(name + " sails.");
+    }
+}
+
+class Yacht extends Transport {
+    public Yacht(String name, int maxLoad) {
+        super("Yacht", name, maxLoad);
+    }
+
+    @Override
+    public void move() {
+        System.out.println(name + " sails.");
+    }
+}
+
+public class AssignmentY1Y2G5 {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Transport[] transports = {
+                new Ship("Cargo Ship", 2000000),
+                new Yacht("Tranquility", 3000),
+                new Aeroplane("Boeing 777", 18000),
+                new Aircraft("Air Force One", 80000)
+        };
+
+        
+        for (int i = 0; i < transports.length; i++) {
+            Transport transport = transports[i];
+            System.out.println(transport);
+            transport.move();
+            if (i < transports.length - 1) {
+                System.out.println(); 
+            }
+        }
+
+        boolean invalidInput = false;
+
+        while (true) {
+            if (invalidInput) {
+                System.out.println("Invalid input.");
+                invalidInput = false;
+            }
+
+            System.out.println("\nTransport Menu:");
+            for (int i = 0; i < transports.length; i++) {
+                System.out.println((i + 1) + ". " + transports[i].name);
+            }
+            System.out.print("Enter Selection (0 to exit): ");
+
+            int transportSelection = getValidInput(scanner);
+
+            if (transportSelection == 0) {
+                System.out.println("Thank you for using the system.");
+                break;
+            }
+            if (transportSelection < 1 || transportSelection > transports.length) {
+                invalidInput = true;
+                continue;
+            }
+
+            Transport selectedTransport = transports[transportSelection - 1];
+
+            System.out.println("\nAction Menu:");
+            System.out.println("1. Load");
+            System.out.println("2. Unload");
+            System.out.println("3. Current Load");
+            System.out.print("Enter Selection (0 to cancel): ");
+
+            int actionSelection = getValidInput(scanner);
+
+            if (actionSelection == 0) {
+                continue;
+            }
+
+            try {
+                switch (actionSelection) {
+                    case 1:
+                        System.out.print("Enter load weight in kg: ");
+                        int loadWeight = getValidInput(scanner);
+                        selectedTransport.load(loadWeight);
+                        System.out.println("Loaded successfully.");
+                        System.out.println("The current load of " + selectedTransport.name + " is " + selectedTransport.currentLoad + " kg.");
+                        break;
+                    case 2:
+                        System.out.print("Enter weight in kg to unload: ");
+                        int unloadWeight = getValidInput(scanner);
+                        selectedTransport.unload(unloadWeight);
+                        System.out.println("Unloaded successfully.");
+                        System.out.println("The current load of " + selectedTransport.name + " is " + selectedTransport.currentLoad + " kg.");
+                        break;
+                    case 3:
+                        System.out.println("The current load of " + selectedTransport.name + " is " + selectedTransport.currentLoad + " kg.");
+                        break;
+                    default:
+                        invalidInput = true;
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static int getValidInput(Scanner scanner) {
+        int input = -1;
+        try {
+            input = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextLine(); 
+            input = -1; 
+        }
+        return input;
+    }
+}
+
